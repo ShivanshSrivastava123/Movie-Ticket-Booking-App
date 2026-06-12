@@ -6,7 +6,7 @@ export const inngest = new Inngest({ id: "movie-ticket-booking" });
 
 //function to add a user to the data base
 const updateUser = inngest.createFunction(
-    {_id : 'sync-user-from-clerl'},
+    {_id : 'sync-user-from-clerk'},
     {event : 'clerk/user.created'},
     async ({event}) => {
         const [id, first_name, last_name, image_url, email_addresses] = event.data
@@ -22,7 +22,7 @@ const updateUser = inngest.createFunction(
 
 //function to delete the user from db
 const deleteUser = inngest.createFunction(
-    {_id : 'delete-user-from-clerl'},
+    {_id : 'delete-user-from-clerk'},
     {event : 'clerk/user.deleted'},
     async ({event}) => {
         const {id} = event.data
