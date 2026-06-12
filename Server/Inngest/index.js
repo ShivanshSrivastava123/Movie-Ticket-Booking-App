@@ -5,11 +5,10 @@ import { User } from "../models/User.js";
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
 
 //function to add a user to the data base
-const updateUser = inngest.createFunction(
-    {_id : 'sync-user-from-clerk'},
-    {event : 'clerk/user.created'},
+const createUser = inngest.createFunction(
+    { id: 'sync-user-from-clerk', triggers: [{ event: "clerk/user.created" }] },
     async ({event}) => {
-        const [id, first_name, last_name, image_url, email_addresses] = event.data
+        const {id, first_name, last_name, image_url, email_addresses} = event.data
         const user = {
             _id: id,
             email: email_addresses[0].email_address,
@@ -22,8 +21,7 @@ const updateUser = inngest.createFunction(
 
 //function to delete the user from db
 const deleteUser = inngest.createFunction(
-    {_id : 'delete-user-from-clerk'},
-    {event : 'clerk/user.deleted'},
+    { id: 'delete-user-from-clerk', triggers: [{ event: "clerk/user.deleted" }] },
     async ({event}) => {
         const {id} = event.data
         await User.findByIdAndDelete(id)
@@ -32,10 +30,9 @@ const deleteUser = inngest.createFunction(
 
 //Function to update the user details
 const updateUser = inngest.createFunction(
-    {_id : 'update-user-from-clerk'},
-    {event : 'clerk/user.updated'},
+    { id: 'update-user-from-clerk', triggers: [{ event: "clerk/user.updated" }] },
     async ({event}) => {
-        const [id, first_name, last_name, image_url, email_addresses] = event.data
+        const {id, first_name, last_name, image_url, email_addresses} = event.data
         const user = {
             _id: id,
             email: email_addresses[0].email_address,
@@ -48,7 +45,7 @@ const updateUser = inngest.createFunction(
 
 // Create an empty array where we'll export future Inngest functions
 export const functions = [
-    updateUser,
+    createUser,
     deleteUser,
     updateUser
 ];
