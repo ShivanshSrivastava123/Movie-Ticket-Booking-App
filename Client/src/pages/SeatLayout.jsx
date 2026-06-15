@@ -5,10 +5,13 @@ import { ArrowRightIcon, ChevronRight, Clock } from 'lucide-react'
 import Loading from '../Components/Loading'
 import isoTimeFormat from '../../lib/isoTimeFormat'
 import toast from 'react-hot-toast'
+import { useAppContext } from '../Context/AppContext'
 
 const SeatLayout = () => {
 
   const getRows = [['A','B'],['C','D'],['E','F'],['G','H'],['I','J'],['K','L']]
+
+  const {axios, user, getToken} = useAppContext()
 
   const {id,date} = useParams()
   const [selectedTime, setSelectedTime] = useState(null)
@@ -17,13 +20,59 @@ const SeatLayout = () => {
   const[occupiedSeats, setOccupiedSeats] = useState([])
   const navigate = useNavigate()
 
-  const getShow = () => {
-    const show = dummyShowsData.find(show => show._id == id)
-    if(show) {
-      setSelectedShow({
-        movie : show,
-        dateTime : dummyDateTimeData
+  const getShow = async () => {
+    try {
+      const {data} = await axios.get(`/api/show/${id}`)
+      if(data.success) {
+        setSelectedShow(data);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getOccupiedSeats = async() => {
+    try {
+      const {data} = await axios.get(`/api/booking/seats/${selectedTime.showId}`)
+      //in the previous function i will get the entire data of the shows of a particular date 
+      //then when i click on a time setSelectedTime will keep the show of a particular time and so i have that particular date and time show in selectedTime so it will have a showid 
+      // to have the data of that show id i have run this api route
+
+      if(data.success) {
+        setOccupiedSeats(data.occupiedSeats)
+      }
+      else{
+        toast(data.message)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleSubmit = async() => {
+    try {
+      if(!user) {
+        return toast('Please login to book the seats')
+      }
+      if(!selectedTime || !selectedSeats.length) {
+        return toast(`Please select time and seats`)
+      }
+
+      const {data} = await axios.post('/api/booking/create' , {showId : selectedTime.showId, selectedSeats} , {
+        headers: {Authorization: `Bearer ${await getToken()}`}
       })
+
+      if(data.success) {
+        window.location.href = data.url;
+
+      }
+      else {
+        // console.log(error)
+        return toast.error(data.message)
+      }
+    } catch (error) {
+      console.log(error)
+      return toast.error(error.message)
     }
   }
 
@@ -32,16 +81,23 @@ const SeatLayout = () => {
     if(!selectedSeats.includes(seatId) && selectedSeats.length > 4) return toast('You cannot select more than 5 seats')
     if(occupiedSeats.includes(seatId)) return toast('This seat is already booked')
     
-    setSelectedSeats(prev => (selectedSeats.includes(seatId) ? selectedSeats.filter((curr)=>(seatId !== curr)) : [...prev, seatId]))
+    setSelectedSeats(prev => prev.includes(seatId) ? prev.filter(seat => seat!==seatId) : [...prev, seatId])
   }
 
   useEffect(()=>{
     getShow();
-  },[])
+  },[id, date])
+
+  useEffect(()=>{
+    if(selectedTime) {
+      getOccupiedSeats()
+    }
+
+  },[selectedTime])
 
   const renderSeats = (row, count = 9) => (
-    <div>
-      <div>
+    <div key={row} className="flex gap-2 mt-2">
+      <div className="flex flex-wrap items-center justify-center gap-2">
         {Array.from({length : count} , (_,i) => {
 
           const seatId = `${row}${i+1}`
@@ -94,7 +150,7 @@ const SeatLayout = () => {
           </div>
           <div className='grid grid-cols-2 gap-11'>
             {getRows.slice(1).map((group,idx)=>(
-              <div>
+              <div key={idx}>
                 {group.map((ch) => (
                   renderSeats(ch)
                 ))}
@@ -103,7 +159,7 @@ const SeatLayout = () => {
           </div>
         </div>
         
-        <button onClick={()=>navigate('/my-bookings')} className='flex items-center gap-1 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer active:scale-95'>
+        <button onClick={handleSubmit} className='flex items-center gap-1 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer active:scale-95'>
           <span>Proceed to Checkout</span>
           <ArrowRightIcon strokeWidth={3} className="w-4 h-4"/>
         </button>

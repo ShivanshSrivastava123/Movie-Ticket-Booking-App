@@ -14,6 +14,7 @@ import Dashboard from './pages/admin/Dashboard.jsx'
 import AddShows from './pages/admin/AddShows.jsx'
 import ListBookings from './pages/admin/ListBookings.jsx'
 import ListShows from './pages/admin/ListShows.jsx'
+import Loading from './Components/Loading.jsx'
 
 
 const App = () => {
@@ -30,6 +31,8 @@ const App = () => {
         <Route path='/movies/:id' element={<MovieDetails/>} />
         <Route path='/movies/:id/:date' element={<SeatLayout/>} />
         <Route path='/my-bookings' element={<MyBookings/>} />
+        <Route path='/loading/:nextUrl' element={<Loading />} />
+
         <Route path='/favourite' element={<Favourite />} />
         <Route path='/admin' element={<Layout />}>
             <Route index element={<Dashboard />} />

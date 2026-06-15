@@ -1,6 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const Loading = () => {
+
+  const {nextUrl} = useParams()
+  const navigate = useNavigate()
+
+  useEffect(()=>{
+    if(nextUrl) {
+      setTimeout(() => {
+        navigate('/' + nextUrl) //next url will just hold the url for my-bookings page
+      }, 8000);
+    }
+  },[])
   return (
     <div>
       <div className='flex justify-center items-center h-[80vh]'>
