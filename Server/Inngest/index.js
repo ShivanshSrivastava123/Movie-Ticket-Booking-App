@@ -2,6 +2,7 @@ import { Inngest } from "inngest";
 import { User } from "../models/User.js";
 import { Booking } from "../models/Booking.js";
 import sendMail from "../configs/nodeMailer.js";
+import { Show } from "../models/Show.js";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
@@ -135,10 +136,115 @@ const initiateSendMail = inngest.createFunction(
     }
 )
 
+const removeSeats = inngest.createFunction(
+    { id: 'remove-seats-after-ten-minutes', triggers: [{ event: "app/checkpayment" }] },
+    async ({event, step}) => {
+        // set an alarm for 10 min from now
+        const timeInterval = new Date(Date.now() + 10*60*1000);
+        
+        //step is injected by inngest from itself
+        await step.sleepUntil("A timer of 10 minutes" , timeInterval)
+
+        await step.run('check-payment-status' , async() => {
+            //first we will find out the booking details by the id
+            const booking = await Booking.findById(event.data.bookingId)
+
+            if(!booking.isPaid) {
+                //now fetch the details about the show
+                const show = await Show.findById(booking.show)
+                booking.bookedSeats.forEach(item => {
+                    delete show.occupiedSeats[item]
+                })
+
+                show.markModified('occupiedSeats')
+                await show.save()
+                //now delete from the booking
+                await Booking.findByIdAndDelete(event.data.bookingId)
+            }
+        })
+    }
+)
+
+//function to send the email as a reminder for the show
+// const sendShowReminders = inngest.createFunction(
+//     { id: 'send-show-reminders', triggers: { cron: "0 */1 * * *" }},
+//     async ({ step })=>{
+//         const now = new Date();
+//         const in1Hours = new Date(now.getTime() + 1 * 60 * 60 * 1000);
+//         const windowStart = new Date(in1Hours.getTime() - 60 * 60 * 1000);
+
+//         // Prepare reminder tasks
+//         const reminderTasks =  await step.run("prepare-reminder-tasks", async ()=>{
+//             const shows = await Show.find({
+//                 showDateTime: { $gte: windowStart, $lte: in1Hours },
+//             }).populate('movie');
+
+//             const tasks = [];
+
+//             for(const show of shows){
+//                 if(!show.movie || !show.occupiedSeats) continue;
+
+//                 const userIds = [...new Set(Object.values(show.occupiedSeats))];
+//                 //extracting the users assigned to the key value(seat no) and a user will come once as set function is used
+//                 if(userIds.length === 0) continue;
+
+//                 const users = await User.find({_id: {$in: userIds}}).select("name email");
+
+//                 for(const user of users){
+//                     tasks.push({
+//                         userEmail: user.email,
+//                         userName: user.name,
+//                         movieTitle: show.movie.title,
+//                         showTime: show.showTime,
+//                     })
+//                 }
+//             }
+//             return tasks;
+//         })
+
+//         if(reminderTasks.length === 0){
+//             return {sent: 0, message: "No reminders to send."}
+//         }
+
+//          // Send reminder emails
+//          const results = await step.run('send-all-reminders', async ()=>{
+//             return await Promise.allSettled(
+//                 reminderTasks.map(task => sendEmail({
+//                     to: task.userEmail,
+//                     subject: `Reminder: Your movie "${task.movieTitle}" starts soon!`,
+//                      body: `<div style="font-family: Arial, sans-serif; padding: 20px;">
+//                             <h2>Hello ${task.userName},</h2>
+//                             <p>This is a quick reminder that your movie:</p>
+//                             <h3 style="color: #F84565;">"${task.movieTitle}"</h3>
+//                             <p>
+//                                 is scheduled for <strong>${new Date(task.showTime).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' })}</strong> at 
+//                                 <strong>${new Date(task.showTime).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata' })}</strong>.
+//                             </p>
+//                             <p>It starts in approximately <strong>1 hours</strong> - make sure you're ready!</p>
+//                             <br/>
+//                             <p>Enjoy the show!<br/>QuickShow Team</p>
+//                         </div>`
+//                 }))
+//             )
+//          })
+
+//          const sent = results.filter(r => r.status === "fulfilled").length;
+//          const failed = results.length - sent;
+
+//          return {
+//             sent,
+//             failed,
+//             message: `Sent ${sent} reminder(s), ${failed} failed.`
+//          }
+//     }
+// )
+
 // Create an empty array where we'll export future Inngest functions
 export const functions = [
     createUser,
     deleteUser,
     updateUser,
-    initiateSendMail
+    initiateSendMail,
+    removeSeats,
+    // sendShowReminders
 ];
