@@ -86,7 +86,7 @@ const initiateSendMail = inngest.createFunction(
                                 <tr>
                                     <td style="padding-bottom: 15px;">
                                         <p style="margin: 0; color: #9CA3AF; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Movie</p>
-                                        <h3 style="margin: 5px 0 0 0; font-size: 22px; color: #ffffff;">${booking.show.movie.title}</h3>
+                                        <h3 style="margin: 5px 0 0 0; font-size: 22px; color: #ffffff;">${bookingData.show.movie.title}</h3>
                                     </td>
                                 </tr>
                                 <tr>
@@ -102,7 +102,7 @@ const initiateSendMail = inngest.createFunction(
                                     <td>
                                         <p style="margin: 0; color: #9CA3AF; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Seats</p>
                                         <p style="margin: 5px 0 0 0; font-size: 16px; font-weight: bold; color: #F84565;">
-                                            ${booking.bookedSeats.join(", ")}
+                                            ${bookingData.bookedSeats.join(", ")}
                                         </p>
                                     </td>
                                 </tr>
