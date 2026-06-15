@@ -60,7 +60,7 @@ const MyBookings = () => {
             <div className='flex flex-col md:items-end md:text-right justify-between p-4'>
               <div className='flex items-center gap-4'>
                 <div className='text-2xl font-semibold mb-3'>${movie.amount}</div>
-                {!movie.isPaid && <Link className='bg-primary px-4 py-1.5 mb-3 text-sm rounded-full font-medium cursor-pointer'>Pay Now</Link>}
+                {!movie.isPaid && <Link to={movie.paymentLink} className='bg-primary px-4 py-1.5 mb-3 text-sm rounded-full font-medium cursor-pointer'>Pay Now</Link>}
               </div>
               <div className='text-sm'>
                 <span className='text-gray-400'>Total Tickets : {movie.bookedSeats.length} | </span>
