@@ -51,9 +51,8 @@ const updateUser = inngest.createFunction(
 // It acts as a smart queue. If the email API fails, Inngest intercepts the error and says, "I'll try again in 30 seconds." If it fails again, it waits 2 minutes, then 5 minutes.
 // It absorbs the massive spike. It catches all 500 events instantly, puts them in a safe line, and processes them at a controlled rate (e.g., 20 per second) so your main backend API stays incredibly fast and stable.
 
-const sendMail = inngest.createFunction(
-    {id : "send-confirmation-mai"},
-    {event : "app/show.booked"},
+const initiateSendMail = inngest.createFunction(
+    { id: 'send-confirmation-mai', triggers: [{ event: "app/show.booked" }] },
     async({event, step}) => {
         const {bookingId} = event.data
 
@@ -141,5 +140,5 @@ export const functions = [
     createUser,
     deleteUser,
     updateUser,
-    sendMail
+    initiateSendMail
 ];
