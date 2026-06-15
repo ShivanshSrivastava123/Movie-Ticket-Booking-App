@@ -73,7 +73,7 @@ const initiateSendMail = inngest.createFunction(
                     
                     <tr>
                         <td align="center" style="background-color: #0f141e; padding: 30px 20px; border-bottom: 3px solid #F84565;">
-                            <h1 style="margin: 0; color: #F84565; font-size: 28px; letter-spacing: 1px;">QUICKSHOW</h1>
+                            <h1 style="margin: 0; color: #9B59B6; font-size: 28px; letter-spacing: 1px;">Cine Vault</h1>
                             <p style="margin: 5px 0 0 0; color: #9CA3AF; font-size: 14px;">Your booking is confirmed!</p>
                         </td>
                     </tr>
@@ -83,7 +83,7 @@ const initiateSendMail = inngest.createFunction(
                             <h2 style="margin: 0 0 20px 0; font-size: 20px; font-weight: normal;">Hi <strong>${bookingData.user.name}</strong>,</h2>
                             <p style="margin: 0 0 30px 0; color: #D1D5DB; font-size: 16px; line-height: 1.5;">Get the popcorn ready! Your seats for <strong>${bookingData.show.movie.title}</strong> have been successfully booked. Here are your digital ticket details:</p>
 
-                            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #374151; border-radius: 8px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #F84565;">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #374151; border-radius: 8px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #9B59B6;">
                                 <tr>
                                     <td style="padding-bottom: 15px;">
                                         <p style="margin: 0; color: #9CA3AF; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Movie</p>
@@ -109,13 +109,7 @@ const initiateSendMail = inngest.createFunction(
                                 </tr>
                             </table>
 
-                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                <tr>
-                                    <td align="center">
-                                        <a href="http://localhost:5173/my-bookings" style="display: inline-block; background-color: #F84565; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold; padding: 14px 30px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px;">View My Tickets</a>
-                                    </td>
-                                </tr>
-                            </table>
+                            
 
                         </td>
                     </tr>
