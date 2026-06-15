@@ -72,7 +72,7 @@ const initiateSendMail = inngest.createFunction(
                 <table width="100%" max-width="600" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #1F2937; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);">
                     
                     <tr>
-                        <td align="center" style="background-color: #0f141e; padding: 30px 20px; border-bottom: 3px solid #F84565;">
+                        <td align="center" style="background-color: #0f141e; padding: 30px 20px; border-bottom: 3px solid ##9B59B6;">
                             <h1 style="margin: 0; color: #9B59B6; font-size: 28px; letter-spacing: 1px;">Cine Vault</h1>
                             <p style="margin: 5px 0 0 0; color: #9CA3AF; font-size: 14px;">Your booking is confirmed!</p>
                         </td>
@@ -102,7 +102,7 @@ const initiateSendMail = inngest.createFunction(
                                 <tr>
                                     <td>
                                         <p style="margin: 0; color: #9CA3AF; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Seats</p>
-                                        <p style="margin: 5px 0 0 0; font-size: 16px; font-weight: bold; color: #F84565;">
+                                        <p style="margin: 5px 0 0 0; font-size: 16px; font-weight: bold; color: #9B59B6;">
                                             ${bookingData.bookedSeats.join(", ")}
                                         </p>
                                     </td>
@@ -117,7 +117,7 @@ const initiateSendMail = inngest.createFunction(
                     <tr>
                         <td align="center" style="background-color: #111827; padding: 25px 20px; border-top: 1px solid #374151;">
                             <p style="margin: 0; color: #6B7280; font-size: 13px;">Please arrive 15 minutes before showtime.</p>
-                            <p style="margin: 10px 0 0 0; color: #6B7280; font-size: 12px;">© 2026 QuickShow Team. All rights reserved.</p>
+                            <p style="margin: 10px 0 0 0; color: #6B7280; font-size: 12px;">© 2026 CineVault Team. All rights reserved.</p>
                         </td>
                     </tr>
 
